@@ -1,0 +1,7 @@
+services:
+  risk-agent-api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      HFRA_LOG_PATH: logs/decisions.jsonl

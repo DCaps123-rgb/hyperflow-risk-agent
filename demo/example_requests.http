@@ -1,0 +1,28 @@
+### Health
+GET http://127.0.0.1:8000/health
+
+### Version
+GET http://127.0.0.1:8000/version
+
+### Evaluate Trade
+POST http://127.0.0.1:8000/evaluate_trade
+Content-Type: application/json
+
+{
+  "symbol": "BTCUSD",
+  "direction": "BUY",
+  "confidence": 0.67,
+  "entry_price": 78000.0,
+  "stop_loss": 77500.0,
+  "take_profit": 79000.0,
+  "lot_size": 0.05,
+  "account_equity": 10000.0,
+  "daily_loss": 0.0,
+  "open_positions": 1,
+  "volatility": 0.32,
+  "spread": 12.5,
+  "session": "LONDON"
+}
+
+### Replay
+POST http://127.0.0.1:8000/replay
