@@ -8,7 +8,12 @@ on:
 
 jobs:
   test:
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        python-version: ["3.14"]
 
     steps:
       - uses: actions/checkout@v4
@@ -16,7 +21,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.14"
+          python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |
@@ -25,3 +30,46 @@ jobs:
 
       - name: Run tests
         run: python -m pytest
+
+      - name: Verify execution invariants
+        shell: pwsh
+        run: |
+          $logsDir = "logs"
+          $journal = "lifecycle_journal.jsonl"
+          $ledger  = "logs/idempotency_ledger.json"
+
+          $anyArtifact = $false
+          $failed      = $false
+
+          if (Test-Path $logsDir) {
+            $anyArtifact = $true
+            Write-Host "-- logs/ contents --"
+            Get-ChildItem $logsDir | Format-Table Name, Length -AutoSize
+          }
+
+          if (Test-Path $journal) {
+            $anyArtifact = $true
+            $size = (Get-Item $journal).Length
+            if ($size -eq 0) {
+              Write-Error "INVARIANT VIOLATION: $journal exists but is empty"
+              $failed = $true
+            } else {
+              Write-Host "-- $journal (first 5 lines) --"
+              Get-Content $journal | Select-Object -First 5
+            }
+          }
+
+          if (Test-Path $ledger) {
+            $anyArtifact = $true
+            $size = (Get-Item $ledger).Length
+            if ($size -eq 0) {
+              Write-Error "INVARIANT VIOLATION: $ledger exists but is empty"
+              $failed = $true
+            }
+          }
+
+          if (-not $anyArtifact) {
+            Write-Host "No runtime artifacts produced during test run"
+          }
+
+          if ($failed) { exit 1 } else { exit 0 }
