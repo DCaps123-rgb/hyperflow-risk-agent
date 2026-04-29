@@ -4,6 +4,8 @@ __pycache__/
 .venv/
 venv/
 logs/*.jsonl
+logs/*.json
+lifecycle_journal.jsonl
 models/*.pkl
 models/*.joblib
 *.pyc
