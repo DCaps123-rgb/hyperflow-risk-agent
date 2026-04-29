@@ -7,4 +7,5 @@ logs/*.jsonl
 models/*.pkl
 models/*.joblib
 *.pyc
-.DS_Store.vscode/
+.DS_Store
+.vscode/
