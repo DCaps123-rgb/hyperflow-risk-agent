@@ -104,23 +104,15 @@ POST /replay
 
 Runs the bundled replay dataset and returns aggregate outcomes.
 
-## Local Setup
+## 🚀 Local Setup
 
-```bash
+```powershell
 python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-## Run Tests
-
-```bash
-pytest
-```
-
-## Run API
-
-```bash
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python -m pytest
 python scripts/run_api.py
 ```
 
