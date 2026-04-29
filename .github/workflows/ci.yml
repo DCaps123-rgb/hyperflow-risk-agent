@@ -47,6 +47,7 @@ jobs:
             Get-ChildItem $logsDir | Format-Table Name, Length -AutoSize
           }
 
+          # ── lifecycle_journal.jsonl ──────────────────────────────────────
           if (Test-Path $journal) {
             $anyArtifact = $true
             $size = (Get-Item $journal).Length
@@ -56,18 +57,68 @@ jobs:
             } else {
               Write-Host "-- $journal (first 5 lines) --"
               Get-Content $journal | Select-Object -First 5
+
+              # Semantic validation: every line must be valid JSON with required keys
+              $requiredKeys = @("event", "symbol", "action")
+              $lineNumber   = 0
+              $entryCount   = 0
+              foreach ($line in (Get-Content $journal)) {
+                $lineNumber++
+                $line = $line.Trim()
+                if ($line -eq "") { continue }
+                try {
+                  $obj = $line | ConvertFrom-Json -ErrorAction Stop
+                } catch {
+                  Write-Error "INVARIANT VIOLATION: $journal line $lineNumber is not valid JSON: $line"
+                  $failed = $true
+                  continue
+                }
+                foreach ($key in $requiredKeys) {
+                  if ($null -eq $obj.$key) {
+                    Write-Error "INVARIANT VIOLATION: $journal line $lineNumber missing required key '$key': $line"
+                    $failed = $true
+                  }
+                }
+                $entryCount++
+              }
+              Write-Host "-- $journal semantic check passed ($entryCount entries) --"
             }
+          } else {
+            Write-Error "INVARIANT VIOLATION: $journal not found"
+            $failed = $true
           }
 
+          # ── logs/idempotency_ledger.json ─────────────────────────────────
           if (Test-Path $ledger) {
             $anyArtifact = $true
             $size = (Get-Item $ledger).Length
             if ($size -eq 0) {
               Write-Error "INVARIANT VIOLATION: $ledger exists but is empty"
               $failed = $true
+            } else {
+              try {
+                $ledgerObj = Get-Content $ledger -Raw | ConvertFrom-Json -ErrorAction Stop
+              } catch {
+                Write-Error "INVARIANT VIOLATION: $ledger is not valid JSON"
+                $failed = $true
+                $ledgerObj = $null
+              }
+              if ($null -ne $ledgerObj) {
+                $ledgerKeys = @($ledgerObj.PSObject.Properties.Name)
+                if ($ledgerKeys.Count -eq 0) {
+                  Write-Error "INVARIANT VIOLATION: $ledger parsed as JSON but contains no entries"
+                  $failed = $true
+                } else {
+                  Write-Host "-- $ledger semantic check passed ($($ledgerKeys.Count) entries) --"
+                }
+              }
             }
+          } else {
+            Write-Error "INVARIANT VIOLATION: $ledger not found"
+            $failed = $true
           }
 
+          # ── Summary ──────────────────────────────────────────────────────
           if (-not $anyArtifact) {
             Write-Host "No runtime artifacts produced during test run"
           }
