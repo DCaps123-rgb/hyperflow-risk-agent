@@ -61,3 +61,20 @@ class ReplaySummary(BaseModel):
     blocked: int
     kill_switch: int
     average_risk_score: float
+
+
+class ExplainRequest(BaseModel):
+    action: str
+    risk_score: float
+    factors: dict[str, float]
+    rule_results: list[RuleResult]
+    lot_multiplier: float = 1.0
+
+
+class ExplainResponse(BaseModel):
+    narrative: str
+    risk_level: str
+    contributing_factors: list[str]
+    failed_rules: list[str]
+    recommendation: str
+    explainer_version: str

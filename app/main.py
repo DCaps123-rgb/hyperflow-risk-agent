@@ -11,8 +11,17 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse, JSONResponse
 
 from app.config import get_settings
-from app.schemas import HealthResponse, ReplaySummary, RiskDecision, TradeIntent, VersionResponse
+from app.schemas import (
+    ExplainRequest,
+    ExplainResponse,
+    HealthResponse,
+    ReplaySummary,
+    RiskDecision,
+    TradeIntent,
+    VersionResponse,
+)
 from risk_agent.engine import RiskEngine
+from risk_agent.explainability import explain_decision
 from risk_agent.replay import run_replay
 
 settings = get_settings()
@@ -55,6 +64,20 @@ def evaluate_trade(trade_intent: TradeIntent) -> RiskDecision:
 def replay() -> ReplaySummary:
     summary = run_replay(engine, settings.replay_path)
     return ReplaySummary(**summary)
+
+
+@app.post("/explain_decision", response_model=ExplainResponse)
+def explain_decision_endpoint(request: ExplainRequest) -> ExplainResponse:
+    """Return a plain-English narrative explanation for a risk decision.
+
+    Accepts the output of ``/evaluate_trade`` (or any dict with the same
+    shape) and returns an enriched, human-readable breakdown.  This endpoint
+    is entirely deterministic — it makes no external API calls and never
+    modifies the supplied risk score, action, or rule results.
+    """
+    payload = request.model_dump()
+    result = explain_decision(payload)
+    return ExplainResponse(**result)
 
 
 # ── Dashboard ──────────────────────────────────────────────────────────────────
