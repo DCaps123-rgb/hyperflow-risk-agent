@@ -4,7 +4,7 @@
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)](https://fastapi.tiangolo.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-25%20passed-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/tests-30%20passed-brightgreen)](tests/)
 
 > **HyperFlow Risk Agent is a real-time risk intelligence and control layer for automated trading systems.**
 
@@ -173,6 +173,7 @@ docker run -p 8000:8000 hyperflow-risk-agent
 | `GET` | `/version` | Version and build info |
 | `POST` | `/evaluate_trade` | Evaluate a trade intent |
 | `POST` | `/replay` | Run batch replay over sample data |
+| `POST` | `/explain_decision` | Plain-English narrative explanation for a decision |
 | `GET` | `/dashboard` | Live risk dashboard (HTML) |
 | `GET` | `/api/dashboard` | Dashboard data (JSON) |
 | `GET` | `/docs` | Swagger UI |
@@ -218,6 +219,40 @@ docker run -p 8000:8000 hyperflow-risk-agent
   "rule_results": [
     { "name": "max_daily_loss", "passed": true, "message": "Daily loss is within permitted threshold." }
   ]
+}
+```
+
+### POST /explain_decision
+
+Accepts the output of `/evaluate_trade` and returns a plain-English narrative breakdown. Entirely deterministic — no external API calls, no modification of the original decision.
+
+**Request body** (same fields as `RiskDecision` output):
+
+```json
+{
+  "action": "BLOCK",
+  "risk_score": 0.75,
+  "lot_multiplier": 0.0,
+  "factors": { "confidence": 0.40, "volatility_penalty": 0.15 },
+  "rule_results": [
+    { "name": "minimum_confidence", "passed": false, "message": "Confidence is below minimum threshold." }
+  ]
+}
+```
+
+**Response** (`ExplainResponse`):
+
+```json
+{
+  "narrative": "This trade was blocked by hard rule 'minimum_confidence' with a risk score of 0.75 (75%). The risk level is classified as HIGH. Hard risk rules protect account equity and cannot be overridden by signal confidence alone.",
+  "risk_level": "HIGH",
+  "contributing_factors": [
+    "Signal Confidence contributed 0.400 to the risk score (lower confidence increases risk).",
+    "Market Volatility contributed 0.150 to the risk score (high volatility increases risk)."
+  ],
+  "failed_rules": ["Minimum Confidence: Confidence is below minimum threshold."],
+  "recommendation": "Improve signal quality or wait for a higher-confidence setup.",
+  "explainer_version": "1.0.0-template"
 }
 ```
 

@@ -18,7 +18,7 @@ Key characteristics:
 - **Deterministic and auditable** — same input always produces same output; every decision is logged
 - **Explainable by default** — every response includes the reason, rule outcomes, and factor breakdown
 - **Configurable via environment** — all thresholds are externalized with safe defaults
-- **25 tests passing** — covering engine invariants, rule correctness, idempotency, explainability, and API
+- **30 tests passing** — covering engine invariants, rule correctness, idempotency, explainability, and API
 - **Live dashboard** — dark glassmorphism single-page command center at `/dashboard`
 - **Docker-ready** — `docker-compose up` and the API is running
 
@@ -30,13 +30,13 @@ Key characteristics:
 
 | Judging Criterion | HyperFlow Response |
 |---|---|
-| **Technical Depth** | Deterministic risk pipeline with 7 hard rules, weighted scorer, 4-tier action resolution, JSONL audit log, and full explainability layer |
+| **Technical Depth** | Deterministic risk pipeline with 7 hard rules, weighted scorer, 4-tier action resolution, JSONL audit log, AI Risk Explainer, and full explainability layer |
 | **Innovation** | Dedicated pre-execution risk layer is rare in open-source trading tooling; most systems have no safety brain |
-| **Completeness** | 25/25 tests passing; Docker-ready; live dashboard; Swagger docs; full README; replay capability |
+| **Completeness** | 30/30 tests passing; Docker-ready; live dashboard; Swagger docs; full README; replay capability; AI Risk Explainer endpoint |
 | **Real-world Applicability** | Architecture mirrors production risk management patterns (hard rules + model layer + action resolution) |
 | **Code Quality** | Pydantic v2 schemas; lru_cache config; JSONL ledger; idempotency tests; determinism invariants |
 | **Presentation** | Live dark glassmorphism dashboard; comprehensive demo script; architecture diagram; pitch deck outline |
-| **Explainability** | Every decision returns reason, factor breakdown, and rule outcomes — no black box |
+| **Explainability** | Every decision returns reason, factor breakdown, and rule outcomes; `POST /explain_decision` returns full narrative, risk classification, contributing factors, and recommended action — no black box |
 | **Honesty** | No fake ML model — `BaselineRiskModel.is_available()` always `False`; docs state what is and is not included |
 
 ## Submission Links
@@ -56,3 +56,4 @@ Then open:
 - Dashboard: http://127.0.0.1:8000/dashboard
 - Swagger UI: http://127.0.0.1:8000/docs
 - API data: http://127.0.0.1:8000/api/dashboard
+- AI Risk Explainer: http://127.0.0.1:8000/explain_decision (POST)
