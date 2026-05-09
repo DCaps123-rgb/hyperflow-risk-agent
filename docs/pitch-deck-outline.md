@@ -128,7 +128,7 @@ Features:
 | API | FastAPI + Pydantic v2 |
 | Config | Environment-backed (`HFRA_` prefix) |
 | Logging | JSONL append-only ledger |
-| Testing | pytest — 25 tests passing |
+| Testing | pytest — 30 tests passing |
 | Container | Docker + docker-compose |
 | Dashboard | Vanilla JS + CSS glassmorphism |
 

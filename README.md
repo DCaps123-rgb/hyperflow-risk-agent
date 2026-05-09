@@ -138,7 +138,7 @@ source .venv/bin/activate
 # 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. Run tests (should be 25 passed)
+# 4. Run tests (should be 30 passed)
 python -m pytest
 
 # 5. Start API
@@ -315,7 +315,7 @@ tests/
 └── test_rules.py                           # Hard rule unit tests
 ```
 
-Run: `python -m pytest` → **25 passed**
+Run: `python -m pytest` → **30 passed**
 
 ---
 

@@ -135,6 +135,13 @@ non-empty valid JSON — it does not inspect key format or value types.
 
 Both artifact files are listed in `.gitignore` and are produced at test runtime.
 
+> **Note on API-level idempotency:** The `idempotency_ledger.json` and SHA-256 intent IDs are
+> **test infrastructure only**. The public `POST /evaluate_trade` endpoint evaluates every
+> incoming request independently — it does not check for duplicate intent IDs and does not
+> deduplicate. Each call appends a new line to `logs/decisions.jsonl`. The idempotency tests
+> verify engine *determinism* (same input → same output) and ledger *key stability* (same
+> intent does not grow the ledger key set), not API-level request deduplication.
+
 ---
 
 ## Invariant Stability Guarantee

@@ -11,7 +11,7 @@ Use this checklist before recording or presenting. Check every item.
 - [ ] Python 3.11+ installed and active
 - [ ] Virtual environment activated (`.venv`)
 - [ ] `pip install -r requirements.txt` completed
-- [ ] All 25 tests passing: `python -m pytest`
+- [ ] All 30 tests passing: `python -m pytest`
 - [ ] Server starting cleanly: `python -m uvicorn app.main:app --host 127.0.0.1 --port 8000`
 
 ### Browser Tabs (open before recording)
@@ -70,7 +70,7 @@ Use this checklist before recording or presenting. Check every item.
 
 ### Code
 
-- [ ] All 25 tests passing on `submission-lockdown` branch
+- [ ] All 30 tests passing on `submission-lockdown` branch
 - [ ] `python -m pytest` → green
 - [ ] No secrets or API keys committed
 - [ ] No fake trained model files committed

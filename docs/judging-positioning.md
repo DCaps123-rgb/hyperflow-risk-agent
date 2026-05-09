@@ -20,7 +20,7 @@ ML scoring is the planned v1.2 evolution. The architecture is explicitly designe
 
 ## 3. Why rule-based instead of ML?
 
-Hackathon v1 prioritizes three things: auditability, testability, and demo clarity. A rule engine with explicit thresholds is easier to verify (25 tests), reason about (deterministic output), and demo convincingly than a model that would require training data, inference infrastructure, and a week of iteration. The path to ML is clear and documented in the roadmap.
+Hackathon v1 prioritizes three things: auditability, testability, and demo clarity. A rule engine with explicit thresholds is easier to verify (30 tests), reason about (deterministic output), and demo convincingly than a model that would require training data, inference infrastructure, and a week of iteration. The path to ML is clear and documented in the roadmap.
 
 ---
 
@@ -32,13 +32,20 @@ Algorithmic trading systems generate order flow from strategy signals. In produc
 
 ## 5. How complete is the implementation?
 
-- 25/25 tests passing (engine, rules, features, explainability, API, invariants, idempotency, gate correctness)
+- 30/30 tests passing (engine, rules, features, explainability, API, invariants, idempotency, gate correctness)
 - Full REST API with Swagger docs
 - Docker and docker-compose for one-command deployment
 - Live dashboard at `/dashboard`
 - JSONL decision logging with replay capability
 - Complete README, architecture docs, risk logic docs, API reference
 - CI badge (GitHub Actions)
+
+> **Clarification on idempotency:** The project includes idempotency-style invariant tests
+> (`test_execution_identity_idempotency.py`) that verify the engine is deterministic and that
+> repeated evaluation of the same trade does not cause ledger key explosion. However,
+> the public `POST /evaluate_trade` endpoint does **not** enforce request-level deduplication —
+> it evaluates each incoming request independently. The idempotency guarantees are at the
+> engine and test-infrastructure level, not at the HTTP API level.
 
 ---
 
