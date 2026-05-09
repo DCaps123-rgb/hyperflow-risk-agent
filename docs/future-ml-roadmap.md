@@ -8,7 +8,7 @@ This document describes the planned evolution of the risk scoring layer from the
 
 The current scorer (`risk_agent/scorer.py`) is a deterministic weighted aggregate:
 
-```
+```text
 risk_score = (
     volatility_penalty * w1
   + spread_penalty     * w2
@@ -48,10 +48,15 @@ def log_outcome(decision_id: str, was_profitable: bool, pnl: float) -> None:
 ```
 
 Log format addition to `logs/decisions.jsonl`:
+
 ```json
 {
   "decision_id": "abc123",
-  "outcome": { "profitable": true, "pnl": 45.0, "recorded_at": "2025-01-01T12:00:00Z" }
+  "outcome": {
+    "profitable": true,
+    "pnl": 45.0,
+    "recorded_at": "2025-01-01T12:00:00Z"
+  }
 }
 ```
 
@@ -69,6 +74,7 @@ def build_labeled_dataset(decisions_path: str, outcomes_path: str) -> list[dict]
 ```
 
 Label schema:
+
 ```json
 {
   "features": { "volatility": 0.32, "spread": 12.5, "confidence": 0.67, ... },
@@ -108,6 +114,7 @@ joblib.dump(model, "models/baseline_risk_model.pkl")
 ```
 
 Feature vector (16 features):
+
 - `volatility`, `spread`, `confidence`, `lot_size_pct`, `daily_loss_pct`
 - `open_positions_pct`, `stop_loss_distance_pct`, `take_profit_distance_pct`
 - `session_encoded`, `direction_encoded`
@@ -125,7 +132,7 @@ Loads trained models with fallback to rule scorer if no model is available.
 class ModelRegistry:
     def load(self, path: str) -> BaselineRiskModel | None:
         ...
-    
+
     def is_available(self) -> bool:
         ...
 ```
@@ -151,6 +158,7 @@ This keeps the hard rules primary and uses the model as an advisory layer.
 **Module**: `risk_agent/paper_trader.py`
 
 Paper trading integration that:
+
 1. Submits ALLOWed decisions to a paper broker
 2. Records actual outcomes
 3. Feeds outcomes back into the outcome logger
@@ -170,9 +178,9 @@ No matter how the ML layer evolves, the 7 hard rules run first. A model can infl
 
 ## Timeline Estimate
 
-| Phase | Target Version | Key Deliverable |
-|---|---|---|
-| Outcome logging | v1.1 | `outcome_logger.py`, `label_builder.py` |
-| Dataset + training | v1.2 | `dataset_builder.py`, `train_baseline_model.py` (real), `model_registry.py` |
-| Adaptive thresholds | v1.3 | Confidence-based threshold adjustment |
-| Closed-loop | v2.0 | Paper trading adapter + auto-retrain |
+| Phase               | Target Version | Key Deliverable                                                             |
+| ------------------- | -------------- | --------------------------------------------------------------------------- |
+| Outcome logging     | v1.1           | `outcome_logger.py`, `label_builder.py`                                     |
+| Dataset + training  | v1.2           | `dataset_builder.py`, `train_baseline_model.py` (real), `model_registry.py` |
+| Adaptive thresholds | v1.3           | Confidence-based threshold adjustment                                       |
+| Closed-loop         | v2.0           | Paper trading adapter + auto-retrain                                        |

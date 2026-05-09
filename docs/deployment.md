@@ -68,13 +68,13 @@ curl -X POST http://127.0.0.1:8000/evaluate_trade \
 
 ### Open in Browser
 
-| URL | Description |
-|---|---|
-| http://127.0.0.1:8000/health | Health check |
-| http://127.0.0.1:8000/docs | Swagger UI |
-| http://127.0.0.1:8000/redoc | ReDoc UI |
-| http://127.0.0.1:8000/dashboard | Live risk dashboard |
-| http://127.0.0.1:8000/api/dashboard | Dashboard JSON data |
+| URL                                                                        | Description         |
+| -------------------------------------------------------------------------- | ------------------- |
+| [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)               | Health check        |
+| [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)                   | Swagger UI          |
+| [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)                 | ReDoc UI            |
+| [http://127.0.0.1:8000/dashboard](http://127.0.0.1:8000/dashboard)         | Live risk dashboard |
+| [http://127.0.0.1:8000/api/dashboard](http://127.0.0.1:8000/api/dashboard) | Dashboard JSON data |
 
 ---
 
@@ -123,18 +123,19 @@ The `docker-compose.yml` mounts the environment variable `HFRA_LOG_PATH` and exp
 
 All configuration uses the `HFRA_` prefix. All variables have safe defaults and are optional.
 
-| Variable | Default | Description |
-|---|---|---|
-| `HFRA_MAX_DAILY_LOSS_PCT` | `0.05` | Maximum daily loss as fraction of equity |
-| `HFRA_MAX_OPEN_POSITIONS` | `3` | Maximum concurrent open positions |
-| `HFRA_MAX_LOT_SIZE` | `0.25` | Maximum lot size per trade |
-| `HFRA_MIN_CONFIDENCE` | `0.55` | Minimum signal confidence |
-| `HFRA_MAX_SPREAD` | `25.0` | Maximum spread in pips |
-| `HFRA_LOG_PATH` | `logs/decisions.jsonl` | Decision audit log path |
+| Variable                  | Default                | Description                              |
+| ------------------------- | ---------------------- | ---------------------------------------- |
+| `HFRA_MAX_DAILY_LOSS_PCT` | `0.05`                 | Maximum daily loss as fraction of equity |
+| `HFRA_MAX_OPEN_POSITIONS` | `3`                    | Maximum concurrent open positions        |
+| `HFRA_MAX_LOT_SIZE`       | `0.25`                 | Maximum lot size per trade               |
+| `HFRA_MIN_CONFIDENCE`     | `0.55`                 | Minimum signal confidence                |
+| `HFRA_MAX_SPREAD`         | `25.0`                 | Maximum spread in pips                   |
+| `HFRA_LOG_PATH`           | `logs/decisions.jsonl` | Decision audit log path                  |
 
 ### Set Environment Variables
 
 **Linux / macOS**:
+
 ```bash
 export HFRA_MAX_DAILY_LOSS_PCT=0.03
 export HFRA_LOG_PATH=/data/decisions.jsonl
@@ -142,6 +143,7 @@ python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
 **Windows (PowerShell)**:
+
 ```powershell
 $env:HFRA_MAX_DAILY_LOSS_PCT = "0.03"
 $env:HFRA_LOG_PATH = "logs/decisions.jsonl"
@@ -149,6 +151,7 @@ python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
 **Docker**:
+
 ```bash
 docker run -p 8000:8000 \
   -e HFRA_MAX_DAILY_LOSS_PCT=0.03 \
@@ -163,6 +166,7 @@ docker run -p 8000:8000 \
 Decision logs are written to `logs/decisions.jsonl` (or the path set by `HFRA_LOG_PATH`).
 
 Format:
+
 ```json
 {
   "timestamp": "2025-01-01T12:00:00Z",
@@ -202,9 +206,9 @@ This is a hackathon demo build. For production deployment:
 
 ## Troubleshooting
 
-| Symptom | Fix |
-|---|---|
-| `uvicorn: command not found` | Use `python -m uvicorn` instead of bare `uvicorn` |
-| Port 8000 already in use | Use `--port 8001` or kill the existing process |
-| Dashboard shows empty state | Run a few `/evaluate_trade` calls first to populate the log |
+| Symptom                       | Fix                                                                                   |
+| ----------------------------- | ------------------------------------------------------------------------------------- |
+| `uvicorn: command not found`  | Use `python -m uvicorn` instead of bare `uvicorn`                                     |
+| Port 8000 already in use      | Use `--port 8001` or kill the existing process                                        |
+| Dashboard shows empty state   | Run a few `/evaluate_trade` calls first to populate the log                           |
 | Tests fail with import errors | Ensure virtual environment is activated and `pip install -r requirements.txt` was run |

@@ -68,7 +68,7 @@ The entire pipeline is deterministic and stateless per call. The same input alwa
 
 ## Architecture
 
-```
+```text
 ┌────────────────────────────────────────────────────┐
 │                   Trading Strategy                  │
 │          (signal generator / algo engine)           │
@@ -104,18 +104,18 @@ The entire pipeline is deterministic and stateless per call. The same input alwa
 
 ### Module Map
 
-| Path | Purpose |
-|---|---|
-| `app/main.py` | FastAPI app — endpoints, routing, log write |
-| `app/config.py` | Environment-backed settings (`HFRA_` prefix) |
-| `app/schemas.py` | Pydantic v2 request/response models |
-| `risk_agent/features.py` | Input normalization → feature dict |
-| `risk_agent/rules.py` | 7 hard rule checks |
-| `risk_agent/scorer.py` | Deterministic risk score `[0.0, 1.0]` |
-| `risk_agent/engine.py` | Orchestration pipeline |
-| `risk_agent/explainability.py` | Reason strings and factor explanations |
-| `risk_agent/replay.py` | Batch evaluation from JSONL |
-| `app/dashboard.html` | Dark glassmorphism live risk dashboard |
+| Path                           | Purpose                                      |
+| ------------------------------ | -------------------------------------------- |
+| `app/main.py`                  | FastAPI app — endpoints, routing, log write  |
+| `app/config.py`                | Environment-backed settings (`HFRA_` prefix) |
+| `app/schemas.py`               | Pydantic v2 request/response models          |
+| `risk_agent/features.py`       | Input normalization → feature dict           |
+| `risk_agent/rules.py`          | 7 hard rule checks                           |
+| `risk_agent/scorer.py`         | Deterministic risk score `[0.0, 1.0]`        |
+| `risk_agent/engine.py`         | Orchestration pipeline                       |
+| `risk_agent/explainability.py` | Reason strings and factor explanations       |
+| `risk_agent/replay.py`         | Batch evaluation from JSONL                  |
+| `app/dashboard.html`           | Dark glassmorphism live risk dashboard       |
 
 ---
 
@@ -146,6 +146,7 @@ python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
 Open:
+
 - Swagger UI: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 - Live Dashboard: [http://127.0.0.1:8000/dashboard](http://127.0.0.1:8000/dashboard)
 - Dashboard API: [http://127.0.0.1:8000/api/dashboard](http://127.0.0.1:8000/api/dashboard)
@@ -167,17 +168,17 @@ docker run -p 8000:8000 hyperflow-risk-agent
 
 ## API Reference
 
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/health` | Service liveness check |
-| `GET` | `/version` | Version and build info |
-| `POST` | `/evaluate_trade` | Evaluate a trade intent |
-| `POST` | `/replay` | Run batch replay over sample data |
+| Method | Path                | Description                                        |
+| ------ | ------------------- | -------------------------------------------------- |
+| `GET`  | `/health`           | Service liveness check                             |
+| `GET`  | `/version`          | Version and build info                             |
+| `POST` | `/evaluate_trade`   | Evaluate a trade intent                            |
+| `POST` | `/replay`           | Run batch replay over sample data                  |
 | `POST` | `/explain_decision` | Plain-English narrative explanation for a decision |
-| `GET` | `/dashboard` | Live risk dashboard (HTML) |
-| `GET` | `/api/dashboard` | Dashboard data (JSON) |
-| `GET` | `/docs` | Swagger UI |
-| `GET` | `/redoc` | ReDoc UI |
+| `GET`  | `/dashboard`        | Live risk dashboard (HTML)                         |
+| `GET`  | `/api/dashboard`    | Dashboard data (JSON)                              |
+| `GET`  | `/docs`             | Swagger UI                                         |
+| `GET`  | `/redoc`            | ReDoc UI                                           |
 
 ### POST /evaluate_trade
 
@@ -217,7 +218,11 @@ docker run -p 8000:8000 hyperflow-risk-agent
     "session_modifier": 0.9
   },
   "rule_results": [
-    { "name": "max_daily_loss", "passed": true, "message": "Daily loss is within permitted threshold." }
+    {
+      "name": "max_daily_loss",
+      "passed": true,
+      "message": "Daily loss is within permitted threshold."
+    }
   ]
 }
 ```
@@ -233,9 +238,13 @@ Accepts the output of `/evaluate_trade` and returns a plain-English narrative br
   "action": "BLOCK",
   "risk_score": 0.75,
   "lot_multiplier": 0.0,
-  "factors": { "confidence": 0.40, "volatility_penalty": 0.15 },
+  "factors": { "confidence": 0.4, "volatility_penalty": 0.15 },
   "rule_results": [
-    { "name": "minimum_confidence", "passed": false, "message": "Confidence is below minimum threshold." }
+    {
+      "name": "minimum_confidence",
+      "passed": false,
+      "message": "Confidence is below minimum threshold."
+    }
   ]
 }
 ```
@@ -250,7 +259,9 @@ Accepts the output of `/evaluate_trade` and returns a plain-English narrative br
     "Signal Confidence contributed 0.400 to the risk score (lower confidence increases risk).",
     "Market Volatility contributed 0.150 to the risk score (high volatility increases risk)."
   ],
-  "failed_rules": ["Minimum Confidence: Confidence is below minimum threshold."],
+  "failed_rules": [
+    "Minimum Confidence: Confidence is below minimum threshold."
+  ],
   "recommendation": "Improve signal quality or wait for a higher-confidence setup.",
   "explainer_version": "1.0.0-template"
 }
@@ -262,24 +273,24 @@ Accepts the output of `/evaluate_trade` and returns a plain-English narrative br
 
 ### Hard Rules (all evaluated every call)
 
-| Rule | Condition | Severity |
-|---|---|---|
-| `max_daily_loss` | `daily_loss_pct > 5%` | block |
-| `max_open_positions` | `open_positions > 3` | block |
-| `max_lot_size` | `lot_size > 0.25` | block |
-| `minimum_confidence` | `confidence < 0.55` | block |
-| `spread_limit` | `spread > 25.0 pips` | block |
-| `stop_loss_required` | stop loss missing or invalid | block |
-| `session_filter` | off-session or toxic session | scale |
+| Rule                 | Condition                    | Severity |
+| -------------------- | ---------------------------- | -------- |
+| `max_daily_loss`     | `daily_loss_pct > 5%`        | block    |
+| `max_open_positions` | `open_positions > 3`         | block    |
+| `max_lot_size`       | `lot_size > 0.25`            | block    |
+| `minimum_confidence` | `confidence < 0.55`          | block    |
+| `spread_limit`       | `spread > 25.0 pips`         | block    |
+| `stop_loss_required` | stop loss missing or invalid | block    |
+| `session_filter`     | off-session or toxic session | scale    |
 
 ### Action Thresholds
 
-| Action | Score Range | Effect |
-|---|---|---|
-| `ALLOW` | `< 0.45` | Full execution permitted |
-| `SCALE_DOWN` | `0.45 – 0.69` | Lot multiplier reduced |
-| `BLOCK` | `0.70 – 0.89` | Trade rejected |
-| `KILL_SWITCH` | `≥ 0.90` | Hard stop, all trading suspended |
+| Action        | Score Range   | Effect                           |
+| ------------- | ------------- | -------------------------------- |
+| `ALLOW`       | `< 0.45`      | Full execution permitted         |
+| `SCALE_DOWN`  | `0.45 – 0.69` | Lot multiplier reduced           |
+| `BLOCK`       | `0.70 – 0.89` | Trade rejected                   |
+| `KILL_SWITCH` | `≥ 0.90`      | Hard stop, all trading suspended |
 
 A block-severity rule failure overrides the score threshold and forces `BLOCK` regardless of score.
 
@@ -289,20 +300,20 @@ A block-severity rule failure overrides the score threshold and forces `BLOCK` r
 
 All settings use the `HFRA_` environment variable prefix.
 
-| Variable | Default | Description |
-|---|---|---|
-| `HFRA_MAX_DAILY_LOSS_PCT` | `0.05` | Maximum allowed daily loss as a fraction of equity |
-| `HFRA_MAX_OPEN_POSITIONS` | `3` | Maximum concurrent open positions |
-| `HFRA_MAX_LOT_SIZE` | `0.25` | Maximum lot size per trade |
-| `HFRA_MIN_CONFIDENCE` | `0.55` | Minimum signal confidence required |
-| `HFRA_MAX_SPREAD` | `25.0` | Maximum spread in pips |
-| `HFRA_LOG_PATH` | `logs/decisions.jsonl` | Path for decision audit log |
+| Variable                  | Default                | Description                                        |
+| ------------------------- | ---------------------- | -------------------------------------------------- |
+| `HFRA_MAX_DAILY_LOSS_PCT` | `0.05`                 | Maximum allowed daily loss as a fraction of equity |
+| `HFRA_MAX_OPEN_POSITIONS` | `3`                    | Maximum concurrent open positions                  |
+| `HFRA_MAX_LOT_SIZE`       | `0.25`                 | Maximum lot size per trade                         |
+| `HFRA_MIN_CONFIDENCE`     | `0.55`                 | Minimum signal confidence required                 |
+| `HFRA_MAX_SPREAD`         | `25.0`                 | Maximum spread in pips                             |
+| `HFRA_LOG_PATH`           | `logs/decisions.jsonl` | Path for decision audit log                        |
 
 ---
 
 ## Test Coverage
 
-```
+```text
 tests/
 ├── test_api.py                             # API endpoint integration tests
 ├── test_engine.py                          # Engine pipeline unit tests
@@ -326,6 +337,7 @@ HyperFlow includes a single-page dark glassmorphism trading risk command center 
 ![Evaluation Request](demo/screenshots/request.png)
 
 Features:
+
 - Live risk posture gauge (semi-circle SVG)
 - Risk score sparkline (last 25 evaluations)
 - Action distribution pills (`ALLOW / SCALE_DOWN / BLOCK / KILL_SWITCH`)
@@ -371,7 +383,7 @@ Features:
 {
   "allowed": false,
   "action": "KILL_SWITCH",
-  "risk_score": 0.9200,
+  "risk_score": 0.92,
   "lot_multiplier": 0.0,
   "reason": "Trade triggered kill-switch protection due to extreme aggregate risk."
 }
@@ -383,14 +395,14 @@ Features:
 
 The current version is intentionally honest: it does not pretend a predictive ML model is loaded.
 
-| Feature | Status | Notes |
-|---|---|---|
-| Predictive ML model | Not included | `BaselineRiskModel.is_available()` always `False` |
-| Broker / exchange API | Not included | No live order execution |
-| Live market data feed | Not included | All inputs come from the caller |
-| Account management | Not included | Account state is caller-supplied |
-| Real trading logs | Not included | All log data is from demo evaluations |
-| Trained model weights | Not included | `models/` directory is reserved for future use |
+| Feature               | Status       | Notes                                             |
+| --------------------- | ------------ | ------------------------------------------------- |
+| Predictive ML model   | Not included | `BaselineRiskModel.is_available()` always `False` |
+| Broker / exchange API | Not included | No live order execution                           |
+| Live market data feed | Not included | All inputs come from the caller                   |
+| Account management    | Not included | Account state is caller-supplied                  |
+| Real trading logs     | Not included | All log data is from demo evaluations             |
+| Trained model weights | Not included | `models/` directory is reserved for future use    |
 
 ---
 
@@ -441,4 +453,4 @@ This project is released under the MIT License. See [LICENSE](LICENSE).
 
 ---
 
-*Built for the HyperFlow hackathon submission. See [docs/submission.md](docs/submission.md) for judging context.*
+_Built for the HyperFlow hackathon submission. See [docs/submission.md](docs/submission.md) for judging context._

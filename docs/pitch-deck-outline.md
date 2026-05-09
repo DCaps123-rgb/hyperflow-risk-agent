@@ -6,13 +6,13 @@
 
 ## Slide 1 — Title
 
-**HyperFlow Risk Agent**
+### HyperFlow Risk Agent
 
-*The safety brain between trading signals and execution.*
+_The safety brain between trading signals and execution._
 
 - Your name / team name
 - Hackathon name + date
-- GitHub: https://github.com/DCaps123-rgb/hyperflow-risk-agent
+- GitHub: [https://github.com/DCaps123-rgb/hyperflow-risk-agent](https://github.com/DCaps123-rgb/hyperflow-risk-agent)
 
 ---
 
@@ -42,7 +42,7 @@ Visual: diagram showing signal → direct execution (no guardrail)
 
 ## Slide 4 — Architecture
 
-```
+```text
 Trading Strategy
       │
       ▼
@@ -63,12 +63,12 @@ Execution Layer (conditionally fires)
 
 ## Slide 5 — The Four Actions
 
-| Action | Score | Meaning |
-|---|---|---|
-| ALLOW | < 0.45 | Execute at full size |
-| SCALE_DOWN | 0.45–0.69 | Execute at reduced lot |
-| BLOCK | 0.70–0.89 | Reject this trade |
-| KILL_SWITCH | ≥ 0.90 | Halt all trading |
+| Action      | Score     | Meaning                |
+| ----------- | --------- | ---------------------- |
+| ALLOW       | < 0.45    | Execute at full size   |
+| SCALE_DOWN  | 0.45–0.69 | Execute at reduced lot |
+| BLOCK       | 0.70–0.89 | Reject this trade      |
+| KILL_SWITCH | ≥ 0.90    | Halt all trading       |
 
 > "BLOCK rejects a trade. KILL_SWITCH tells the whole system to stop."
 
@@ -113,6 +113,7 @@ Every decision returns:
 Screenshot of `/dashboard` — dark glassmorphism command center.
 
 Features:
+
 - Real-time risk posture gauge
 - Score sparkline
 - Action distribution
@@ -123,14 +124,14 @@ Features:
 
 ## Slide 9 — Tech Stack
 
-| Layer | Technology |
-|---|---|
-| API | FastAPI + Pydantic v2 |
-| Config | Environment-backed (`HFRA_` prefix) |
-| Logging | JSONL append-only ledger |
-| Testing | pytest — 30 tests passing |
-| Container | Docker + docker-compose |
-| Dashboard | Vanilla JS + CSS glassmorphism |
+| Layer     | Technology                          |
+| --------- | ----------------------------------- |
+| API       | FastAPI + Pydantic v2               |
+| Config    | Environment-backed (`HFRA_` prefix) |
+| Logging   | JSONL append-only ledger            |
+| Testing   | pytest — 30 tests passing           |
+| Container | Docker + docker-compose             |
+| Dashboard | Vanilla JS + CSS glassmorphism      |
 
 ---
 
@@ -140,18 +141,18 @@ Features:
 
 - `BaselineRiskModel.is_available()` always returns `False`
 - Scorer is deterministic and rule-weighted
-- ML is the *next* evolution, not a pretend current feature
+- ML is the _next_ evolution, not a pretend current feature
 
 ---
 
 ## Slide 11 — Roadmap
 
-| Version | Feature |
-|---|---|
-| v1.1 | Outcome logging + label collection |
-| v1.2 | `BaselineRiskModel` trained on decisions |
-| v1.3 | Adaptive thresholds from model confidence |
-| v2.0 | Broker adapter (paper trading mode) |
+| Version | Feature                                   |
+| ------- | ----------------------------------------- |
+| v1.1    | Outcome logging + label collection        |
+| v1.2    | `BaselineRiskModel` trained on decisions  |
+| v1.3    | Adaptive thresholds from model confidence |
+| v2.0    | Broker adapter (paper trading mode)       |
 
 > "ML advises; risk rules govern."
 
@@ -168,6 +169,6 @@ pip install -r requirements.txt
 python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-Open: http://127.0.0.1:8000/dashboard
+Open: [http://127.0.0.1:8000/dashboard](http://127.0.0.1:8000/dashboard)
 
 **HyperFlow: The safety brain your trading system is missing.**

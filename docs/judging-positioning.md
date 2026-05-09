@@ -58,6 +58,7 @@ Algorithmic trading systems generate order flow from strategy signals. In produc
 ## 7. How is explainability implemented?
 
 Every `RiskDecision` response includes:
+
 - `reason` — a human-readable explanation of the action
 - `factors` — per-factor numeric contributions to the risk score
 - `rule_results` — pass/fail outcome for each of the 7 hard rules, with a message
@@ -75,6 +76,7 @@ The dashboard at `/dashboard` is a single HTML file served by FastAPI. It fetche
 ## 9. Is this safe to run publicly?
 
 Yes. The repository contains:
+
 - No broker credentials or API keys
 - No live execution integrations
 - No real account data

@@ -32,7 +32,7 @@ Use this checklist before recording or presenting. Check every item.
 ### Scene 1 — Problem Statement (20s)
 
 - [ ] Stated the problem: trading systems have no control layer
-- [ ] Said the key line: *"HyperFlow does not try to be a magic trading bot. It is the safety brain between trading signals and execution."*
+- [ ] Said the key line: _"HyperFlow does not try to be a magic trading bot. It is the safety brain between trading signals and execution."_
 
 ### Scene 2 — Dashboard (30s)
 
@@ -56,12 +56,12 @@ Use this checklist before recording or presenting. Check every item.
 ### Scene 5 — Architecture (20s)
 
 - [ ] Explained 5-stage pipeline
-- [ ] Said: *"same input, same output, every time — deterministic"*
-- [ ] Said: *"no pretend ML model"*
+- [ ] Said: _"same input, same output, every time — deterministic"_
+- [ ] Said: _"no pretend ML model"_
 
 ### Scene 6 — Close (10s)
 
-- [ ] Said: *"ML advises; risk rules govern."*
+- [ ] Said: _"ML advises; risk rules govern."_
 - [ ] Showed GitHub URL
 
 ---
