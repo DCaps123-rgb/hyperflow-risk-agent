@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import FastAPI
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 
 from app.config import get_settings
 from app.schemas import HealthResponse, ReplaySummary, RiskDecision, TradeIntent, VersionResponse
@@ -31,6 +31,11 @@ def _append_log(request_payload: dict, decision: dict) -> None:
     }
     with log_path.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(record) + "\n")
+
+
+@app.get("/", include_in_schema=False)
+def root() -> RedirectResponse:
+    return RedirectResponse(url="/dashboard", status_code=308)
 
 
 @app.get("/health", response_model=HealthResponse)
